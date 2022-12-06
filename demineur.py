@@ -1,6 +1,11 @@
-#TP2
+#TP2; and calculeouvert(tab[0])!=True;   else:
+       # res=True 
 
-#verifier cas de gagner mais flag incorrect; output image X ou flag?
+#BUG!!!!!!!!!!!!!!!!!!!; GAGNE malgre le fait que ya un flag qui est incorrect__________________________
+
+#CHECK flag et victoire; si pas bombe et flag PAS DE WIN
+
+#verifier cas de gagner mais flag incorrect; output image X ou flag?____________________________________
 
 #ALSO; flag thingy was kind of hardcoded; need to fix that if got time
 
@@ -9,11 +14,9 @@
 #A faire :
 #1. SHIFTKEY pour les flags
 #2. RECURSION
-#3. NbRangees e NbColonnes >=10
+#3. NbRangees et NbColonnes >=10
 #4. BETTER COMMENTS AND VARIABLE NAMES
 #5. TESTS UNITAIRES
-
-
 
 
 #DECLAS
@@ -36,7 +39,7 @@ count=0
 #commencer une nouvelle partie= nouveau code HTML avec case vides, nouvelles bombes etc
 def decla(ran, col):
     global placeBombeListeUnique
-    placeBombeListeUnique=[]
+    placeBombeListeUnique=["11"]
     global grille, grilleBombe
     grille=[]
     grilleBombe=[]
@@ -83,9 +86,9 @@ def init(ran,col):
     main.innerHTML = string
     
     #TEST SEULEMENT pour verifier flag; a enlever lorsque SHIFT sera fait !!!!!!!!!!!!!!!!!!!!!!! (IMPORTANT)
-    tuile11=document.querySelector('#tuile11')
-    tuile11.innerHTML='<img src="http://codeboot.org/images/minesweeper/flag.png">'
-    grille[1][1]="D"
+    #tuile11=document.querySelector('#tuile11')
+    #tuile11.innerHTML='<img src="http://codeboot.org/images/minesweeper/flag.png">'
+    #grille[1][1]="D"
 
 
 # Prend deux entiers représentant les nombres de rangee et colonne et retourne
@@ -132,11 +135,11 @@ def decideRangeeCol(ran,col):
         for j in range(1,col+1):
             counts=counts+1
             
-            string=string + '<td id="' +idCase(counts,i) + '" onclick="clic('+str(colRow(i,counts))+')"><img src="http://codeboot.org/images/minesweeper/blank.png"></td>'+'\n'
+            string=string + '<td id="' +idCase(counts,i) + '" onclick="clic('+str(colRow(i,counts))+', event)"><img src="http://codeboot.org/images/minesweeper/blank.png"></td>'+'\n'
         string=string + '</tr>\n'
 
     string=string + '</table>'
-    print(string)
+   
     return string
 
 #_COPY PASTE; sauvegarder au cas ou; sleep(0) a l'air important_
@@ -161,16 +164,22 @@ def decideRangeeCol(ran,col):
 #techniquement, c une fonction qui teste seulement victoire et pas losing scenario
 def victoire(ran, col):
     count=0
-    
+    coded=False
     for i in range(1,ran+1):
         for j in range(1,col+1):
-            
+            #il faut que casevide/ flag+bombe = nombre de mines
             if grille[i][j]=="0":  #rien de devoiler(blank)
                 count=count+1
                 
             elif grille[i][j]=="D" and grilleBombe[i][j]==True:
+                breakpoint()
                 count=count+1
+            #elif grille[i][j]=="D" and grilleBombe[i][j]!=True:
+               
+              #  coded=True
+                 
                 
+   
     if count==0:
         return True
     else:
@@ -182,7 +191,7 @@ def victoire(ran, col):
 def placeBombeAleatoire(case):
     global grilleBombe
     global placeBombeListeUnique
-    #placeBombeListeUnique.append("11")
+    placeBombeListeUnique=[]
     #(1er element)= 1ere case
     x=11
     boo=False
@@ -230,10 +239,10 @@ def calculeGrille():
     
 # Gestionnaire d'évènement d'un clic sur une case.
 # Le paramètre case est un entier représentant l'index de la case cliquée
-def clic(case):
-    
+def clic(case, event):
+    global  grille, grilleBombe
     global count
-    global  grille, event, grilleBombe
+    
     count=count+1
     
     if count==1:
@@ -247,6 +256,24 @@ def clic(case):
     
     
     calculeGrille()
+    if event.shiftKey and grille[int(casestr[:1])][int(casestr[1:])]=="D":
+        change=image("blank")
+          
+        l=document.querySelector("#" + id)
+        l.innerHTML=(change)
+        
+        grille[int(casestr[:1])][int(casestr[1:])]="DONE"
+        
+    if event.shiftKey and grille[int(casestr[:1])][int(casestr[1:])]!="DONE":
+        change=image("flag")
+          
+        l=document.querySelector("#" + id)
+        l.innerHTML=(change)
+        
+        grille[int(casestr[:1])][int(casestr[1:])]="D"
+        
+    
+    
     
     if grille[int(casestr[:1])][int(casestr[1:])]!="D":
         if grille[int(casestr[:1])][int(casestr[1:])]=="0" and grilleBombe[int(casestr[:1])][int(casestr[1:])]=="0":
@@ -262,6 +289,9 @@ def clic(case):
            #Mainetant il faut calculer pour les bombes adjacentes
         
             bombeACote(casestr)
+            
+            #acote=bombeACote()________________________________________________________
+            #ICI il faut calculer les bombes a cote a condition qu'on soit au >=2e tour sinon appelle avec 0
         
             change=image("0")
            
@@ -290,6 +320,9 @@ def clic(case):
         
             count=0
         
+            
+                                     
+                                     
 
 #IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #trouver cas de base d'abord
