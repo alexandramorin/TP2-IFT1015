@@ -1,12 +1,6 @@
 #TP2; and calculeouvert(tab[0])!=True;   else:
        # res=True 
 
-#BUG!!!!!!!!!!!!!!!!!!!; GAGNE malgre le fait que ya un flag qui est incorrect__________________________
-
-#CHECK flag et victoire; si pas bombe et flag PAS DE WIN
-
-#verifier cas de gagner mais flag incorrect; output image X ou flag?____________________________________
-
 #ALSO; flag thingy was kind of hardcoded; need to fix that if got time
 
 #CHERCHER LES !!!!!!!!!!!!!!!!!!! dans le code pour les points importants
@@ -29,9 +23,10 @@
 #reduce data redundancy)
 
 #count- increment till nombre de bombes (doit etre = nbMine(constante))
-global grille,grilleBombe, count
+global grille,bombe, count
 global nbMine
 global placeBombeListeUnique
+
 
 nbMine=5
 count=0
@@ -39,18 +34,21 @@ count=0
 #commencer une nouvelle partie= nouveau code HTML avec case vides, nouvelles bombes etc
 def decla(ran, col):
     global placeBombeListeUnique
-    placeBombeListeUnique=["11"]
-    global grille, grilleBombe
+    placeBombeListeUnique=[""]
+    global grille, bombe
     grille=[]
-    grilleBombe=[]
+    bombe=[]
+    
     for i in range(1,ran+2):
         
         grille1=[]
+        grille2=[]
         for j in range(1,col+2):
             grille1.append("0")
+            grille2.append(False)
                 
         grille.append(grille1)  
-        grilleBombe.append(grille1)
+        bombe.append(grille2)
             
      
 
@@ -81,9 +79,11 @@ def init(ran,col):
     
     main=document.querySelector('#main')
     main.innerHTML=""
-   
+    
     string=decideRangeeCol(ran,col)
     main.innerHTML = string
+    
+    
     
     #TEST SEULEMENT pour verifier flag; a enlever lorsque SHIFT sera fait !!!!!!!!!!!!!!!!!!!!!!! (IMPORTANT)
     #tuile11=document.querySelector('#tuile11')
@@ -139,7 +139,7 @@ def decideRangeeCol(ran,col):
         string=string + '</tr>\n'
 
     string=string + '</table>'
-   
+    
     return string
 
 #_COPY PASTE; sauvegarder au cas ou; sleep(0) a l'air important_
@@ -159,28 +159,41 @@ def decideRangeeCol(ran,col):
 
 #EVENEMENTS
 
-#check si tous les elements de la grille sont des bombes et increment count
-#qui doit etre=nbMine si win
+#check si tous les elements de la grille sont des bombes et decrement count
+#qui doit etre=0 si win
 #techniquement, c une fonction qui teste seulement victoire et pas losing scenario
 def victoire(ran, col):
-    count=0
+    
+    count=(ran*col)-nbMine
+    done=False
     coded=False
     for i in range(1,ran+1):
         for j in range(1,col+1):
+           
             #il faut que casevide/ flag+bombe = nombre de mines
-            if grille[i][j]=="0":  #rien de devoiler(blank)
+            if grille[i][j]=="DONE":  #rien de devoiler(blank)
+                count=count-1
+           
+            elif grille[i][j]=="D" and bombe[i][j]!=True:
                 count=count+1
+                coded=True
+                break
                 
-            elif grille[i][j]=="D" and grilleBombe[i][j]==True:
-                breakpoint()
-                count=count+1
-            #elif grille[i][j]=="D" and grilleBombe[i][j]!=True:
-               
-              #  coded=True
-                 
-                
-   
-    if count==0:
+        if coded==True:
+            break
+        if i==ran+1 and j==ran+1:
+            done=True
+    
+    if coded==True:
+        return False
+    elif count==0 :
+        breakpoint()
+        change=image("0")
+        coded=True
+        id="tuile" + str(ran)+str(col)
+        l=document.querySelector("#" + id)
+        l.innerHTML=(change)
+        
         return True
     else:
         return False
@@ -189,7 +202,7 @@ def victoire(ran, col):
     
     
 def placeBombeAleatoire(case):
-    global grilleBombe
+    global bombe
     global placeBombeListeUnique
     placeBombeListeUnique=[]
     #(1er element)= 1ere case
@@ -221,7 +234,7 @@ def placeBombeAleatoire(case):
                 row=int(l[:1])
                 col=int(l[1:])
                
-                grilleBombe[row][col]=True
+                bombe[row][col]=True
                  
     #hack pour savoir ou sont les bombes pour faciliter les tests               
     print(placeBombeListeUnique)       
@@ -240,9 +253,9 @@ def calculeGrille():
 # Gestionnaire d'évènement d'un clic sur une case.
 # Le paramètre case est un entier représentant l'index de la case cliquée
 def clic(case, event):
-    global  grille, grilleBombe
-    global count
-    
+    global  grille, bombe
+    global count, coded
+    coded=False
     count=count+1
     
     if count==1:
@@ -256,17 +269,20 @@ def clic(case, event):
     
     
     calculeGrille()
+    
     if event.shiftKey and grille[int(casestr[:1])][int(casestr[1:])]=="D":
+       
         change=image("blank")
-          
+        coded=True
         l=document.querySelector("#" + id)
         l.innerHTML=(change)
         
-        grille[int(casestr[:1])][int(casestr[1:])]="DONE"
+        grille[int(casestr[:1])][int(casestr[1:])]="0"
         
-    if event.shiftKey and grille[int(casestr[:1])][int(casestr[1:])]!="DONE":
+    elif event.shiftKey and (grille[int(casestr[:1])][int(casestr[1:])]=="0" or bombe[int(casestr[:1])][int(casestr[1:])]==True):
+        
         change=image("flag")
-          
+       
         l=document.querySelector("#" + id)
         l.innerHTML=(change)
         
@@ -274,9 +290,9 @@ def clic(case, event):
         
     
     
-    
-    if grille[int(casestr[:1])][int(casestr[1:])]!="D":
-        if grille[int(casestr[:1])][int(casestr[1:])]=="0" and grilleBombe[int(casestr[:1])][int(casestr[1:])]=="0":
+    if  grille[int(casestr[:1])][int(casestr[1:])]=="0":
+        
+        if coded==False and (grille[int(casestr[:1])][int(casestr[1:])]=="0") and bombe[int(casestr[:1])][int(casestr[1:])]!=True:
             ###TESTE AVEC MINE mais la il faut appeler la fonction recursive
        
             pos=recurs(casestr)
@@ -298,9 +314,12 @@ def clic(case, event):
             l=document.querySelector("#" + id)
             l.innerHTML=(change)
             #mettreAJourHTML()
+        elif coded==True:
+            coded=False
             
-        if grilleBombe[int(casestr[:1])][int(casestr[1:])]==True:
-           # grille[1][1]="D"
+    if bombe[int(casestr[:1])][int(casestr[1:])]==True and grille[int(casestr[:1])][int(casestr[1:])]!="D":
+           
+            # grille[1][1]="D"
             devoileBombe(casestr)
         
             change=image("mine-red")
@@ -312,7 +331,7 @@ def clic(case, event):
         
             count=0
       
-        if victoire(5,8)==True:
+    if victoire(5,8)==True:
             
             devoileBombe(casestr)
             
@@ -331,7 +350,7 @@ def recurs(el):
         
 #devoiles les bombes lorsque perdu donc si bombe; si flag et not bombe
 def devoileBombe(casestr):
-    global placeBombeListeUnique, grilleBombe, grille
+    global placeBombeListeUnique, bombe, grille
     
     for i in range(nbMine):
         
@@ -365,7 +384,7 @@ def devoileBombe(casestr):
             while (k!=(nbMine-1) and p==False):
                # breakpoint()
                 k=k+1
-                if (grilleBombe[i][j]!=True) and grille[i][j]=="D" :
+                if (bombe[i][j]!=True) and grille[i][j]=="D" :
                    
                     change=image("mine-red-x")
                     id= "tuile" + str(i) + str(j)
