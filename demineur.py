@@ -345,8 +345,15 @@ def clic(case, event):
 
 #IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #trouver cas de base d'abord
-def recurs(el):
-    pass    
+def recurs(rang, colonne):
+    grille[[]]=-1
+    rang=int(casestr[:1])
+    colonne=int(casestr[1:])
+    if [grille[rang+1][colonne]]==casevide:
+        casestr=str(int(casestr[:1])[int(casestr[1:])])
+    if [grille[rang][colonne+1]]==casevide:
+        casestr=str(int(casestr[:1])[int(casestr[1:])])
+    return     
         
 #devoiles les bombes lorsque perdu donc si bombe; si flag et not bombe
 def devoileBombe(casestr):
