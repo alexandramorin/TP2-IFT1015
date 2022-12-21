@@ -2,6 +2,9 @@
 #TP2 - IFT1015
 #Mercredi 21 decembre 2022
 
+#Ce programme permet de jouer au jeu demineur. En cliquant sur les tuiles, il faut faire attention de ne pas toucher une mine. 
+#Les chiffres dévoilé indique la proximité de la mine (Par exemple: 1 veut dire que la bombe est à coté).
+
 #DECLAS
 #grille pour noter tous les coups
 
