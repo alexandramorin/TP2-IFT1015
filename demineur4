@@ -1,6 +1,6 @@
-#Vennila Sooben() et Alexandra Morin (20236038)
-#TP2 - IFT1015
-#Mercredi 21 decembre 2022
+# Vennila Sooben(20235256) et Alexandra Morin (20236038)
+# TP2 - IFT1015
+# Mercredi 21 decembre 2022
 
 #Ce programme permet de jouer au jeu demineur. En cliquant sur les tuiles, il faut faire attention de ne pas toucher une mine. 
 #Les chiffres dévoilé indique la proximité de la mine (Par exemple: 1 veut dire que la bombe est à coté).
@@ -193,7 +193,6 @@ def placeBombeAleatoire(case):
         nbMine=math.floor(random()*(gColonne+1))
     nbMine+=1 #Pour avoir au moins 1 mine
     placeBombeListeUnique=[]
-    print( "Nombre de mine", nbMine)
     
     # Vérification si les emplacements des mines sont uniques
     while len(placeBombeListeUnique) != nbMine:
@@ -225,8 +224,7 @@ def placeBombeAleatoire(case):
                 grille[r-1][c]+=1
             if r-1 >= 0 and c+1 <= gColonne and grille[r-1][c+1]!=caseBombe:
                 grille[r-1][c+1]+=1
-            print(grille)
-    
+     
 # Gestionnaire d'évènement d'un clic sur une case.
 # Le paramètre case est un entier représentant l'index de la case cliquée
 # Cette fonction traite les évènements onclick sur les tuiles de
@@ -271,21 +269,21 @@ def clic(case, event):
         pos=recurs(rangee, colonne) 
             
     elif grille[rangee][colonne]==caseBombe:
-            devoileBombe(casestr)
-            change=image("mine-red")
-            l=document.querySelector("#" + id)
-            l.innerHTML=(change)
-            alert("YOU LOST")
-            count=0
+        devoileBombe(casestr)
+        change=image("mine-red")
+        l=document.querySelector("#" + id)
+        l.innerHTML=(change)
+        alert("YOU LOST")
+        count=0
     else:
         change=image(str(grille[rangee][colonne]))
         l=document.querySelector("#" + id)
         l.innerHTML=(change)
         
     if victoire()==True:
-            devoileBombe(casestr)
-            alert("YOU WON")
-            count=0
+        devoileBombe(casestr)
+        alert("YOU WON")
+        count=0
 
 # Cette fonction permet de devoilée les cases vides qui se touche dès qu'une
 # case vide est cliqué
